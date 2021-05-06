@@ -1,0 +1,46 @@
+server:
+  servlet:
+    context-path: /isphere-bo
+  port: 7777
+spring:
+  profiles:
+    active: dev
+  application:
+    name: school
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: test_db
+    password: test_db
+    driver-class-name: org.h2.Driver
+    hikari:
+      auto-commit: false
+  liquibase:
+    enabled : false
+    contexts: base
+    change-log: classpath:config/liquibase/master.xml
+  jpa:
+    database: H2
+    show-sql: false
+    properties:
+      hibernate.temp.use_jdbc_metadata_defaults: false
+      transaction-type: RESOURCE_LOCAL
+    hibernate:
+      ddl-auto: create
+logging:
+  servicename : ${spring.application.name}
+  file: ${logging.servicename}.log
+  directory: logs
+  filesize:
+    max: 20MB
+  archivesize:
+    max: 200MB
+    history:
+      max: 30
+  dev:
+    loglevel: INFO
+  recette:
+    loglevel: INFO
+  prerod:
+    loglevel: ERROR
+  prod:
+    loglevel: ERROR

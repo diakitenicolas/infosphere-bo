@@ -1,0 +1,103 @@
+jsf:
+#  enable-websocket-endpoint: true
+  primefaces:
+    theme: ultima-blue-grey
+    privateCaptchaKey: myPrivateCaptchaKey
+    publicCaptchaKey: myKey
+    fontAwesome: true
+  facelets-libraries:
+    - /tags/tags.taglib.xml
+
+
+server:
+  servlet:
+    context-path: /school
+  port: 7777
+
+spring:
+  profiles:
+    active: dev
+
+  application:
+    name: school
+
+  #############################################################################
+  ##      PARAMS FOR DATASOURCE                                              ##
+  ##   Identifiants access a la base                                         ##
+  ##     - username: test_db                                                 ##
+  ##     - password: test_db                                                 ##
+  ##   C'est la valeur test_db cryptée qui donne U4tcACn67wq8YbsoX/GvJQ==    ##
+  ##   et pour dire a JASYSP (techno de crypto utilise) de l'interpreter     ##
+  ##   on ajoute ENC                                                         ##
+  ##   NB : Comme cest du crypto dynamic, deux generations du meme           ##
+  ##        mot de passe ne genere pas la meme cle                           ##
+  ##        C'est pour cette raison que le crypto du pwd differe du          ##
+  ##        username mm si les deux utilisent test_db                        ##
+  #############################################################################
+  datasource:
+    url: jdbc:postgresql://localhost:5432/school
+    username: test_db
+    password: test_db
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+  liquibase:
+    contexts: base
+    change-log: classpath:config/liquibase/master.xml
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    properties:
+      hibernate.temp.use_jdbc_metadata_defaults : false
+      transaction-type: RESOURCE_LOCAL
+    hibernate:
+      ddl-auto: create
+
+
+ ###################################################
+ ##          PARAM FOR LOGGER                     ##
+ ##                                               ##
+ ###################################################
+logging:
+  servicename : ${spring.application.name}
+  file: ${logging.servicename}.log
+  directory: logs
+  filesize:
+    max: 20MB
+  archivesize:
+    max: 200MB
+    history:
+      max: 30
+  dev:
+    loglevel: INFO
+  recette:
+    loglevel: INFO
+  prerod:
+    loglevel: ERROR
+  prod:
+    loglevel: ERROR
+
+logstash:
+  server: ${LOGSTASH_SERVER:localhost}
+
+application:
+  url: https://localhost:7777/school
+
+  ##################################################
+  ##          PARAMS APPLICATIFS                  ##
+  ##                                              ##
+  ##################################################
+
+  force-reinit-database : true
+  drive-root-path: /Users/NDIA/Documents/dev/apps-drive/me/school
+
+
+  ##################################################
+  ##          PARAMS PREVIEWER                    ##
+  ##                                              ##
+  ##################################################
+  previewer:
+    folder: http://localhost:${server.port}${server.servlet.context-path}/viewers/
+    folder-concrete-path: /Users/NDIA/Documents/dev/workspacePhoton/.metadata/.plugins/org.eclipse.wst.server.core/tmp3/wtpwebapps/eyone/resources/viewers/
+    google-cloud-viewer-url : https://docs.google.com/gview?url=
+    office-cloud-viewer-url : https://view.officeapps.live.com/op/embed.aspx?src=

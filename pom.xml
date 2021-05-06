@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.4.3</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+
+
+  <groupId>io.infosphere</groupId>
+  <artifactId>infosphre-bo</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <name>InfoSphere BO</name>
+  <description>INFOSPHERE BO</description>
+
+  <developers>
+    <developer>
+      <name>Nicolas Diakite</name>
+      <email>diakitenicokas@gmail.com</email>
+      <organization>NELS</organization>
+      <organizationUrl>http://ndiakite.io</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/diakitenicolas/infosphere-bo</url>
+  </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <guava.version>20.0</guava.version>
+
+    <skip.integration.test>true</skip.integration.test>
+    <skip.unit.test>true</skip.unit.test>
+    <skip.editorconfig.check>false</skip.editorconfig.check>
+    <skip.codestyle.application>true</skip.codestyle.application>
+  </properties>
+
+  <dependencies>
+
+    <!-- MANAGEMENT -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jolokia</groupId>
+      <artifactId>jolokia-core</artifactId>
+    </dependency>
+
+
+    <!-- SPRING BOOT STUFF -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+
+    <!-- TEST -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+
+
+    <!-- JPA -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-envers</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.common</groupId>
+      <artifactId>hibernate-commons-annotations</artifactId>
+      <version>5.0.1.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+
+
+    <!-- CRYPTO -->
+    <dependency>
+      <groupId>com.github.ulisesbocchio</groupId>
+      <artifactId>jasypt-spring-boot-starter</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+
+
+    <!-- WEB -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+
+    <!-- LOGSTACK LOGBACK INTEGRATION -->
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>4.9</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-access</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+
+    <!-- UTILS -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <profiles>
+
+    <profile>
+      <id>cicd-with-it</id>
+      <properties>
+        <skip.integration.test>false</skip.integration.test>
+        <skip.unit.test>true</skip.unit.test>
+        <skip.editorconfig.check>false</skip.editorconfig.check>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>cicd-with-ut</id>
+      <properties>
+        <skip.integration.test>true</skip.integration.test>
+        <skip.unit.test>false</skip.unit.test>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>eclinter</id>
+      <properties>
+        <skip.editorconfig.check>false</skip.editorconfig.check>
+      </properties>
+    </profile>
+    <profile>
+      <id>codestyle</id>
+      <properties>
+        <skip.codestyle.application>false</skip.codestyle.application>
+      </properties>
+    </profile>
+
+  </profiles>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+            <configuration>
+              <additionalProperties>
+                <encoding.source>UTF-8</encoding.source>
+                <encoding.reporting>UTF-8</encoding.reporting>
+                <java.source>${maven.compiler.source}</java.source>
+                <java.target>${maven.compiler.target}</java.target>
+              </additionalProperties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- TESTING PURPOSE -->
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <skipITs>${skip.integration.test}</skipITs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>${skip.unit.test}</skipTests>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <configuration>
+          <offline>true</offline>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.coveo</groupId>
+        <artifactId>fmt-maven-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <skip>${skip.codestyle.application}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.ec4j.maven</groupId>
+        <artifactId>editorconfig-maven-plugin</artifactId>
+        <version>0.0.11</version>
+        <configuration>
+          <includes>
+            <include>src/**</include>
+          </includes>
+          <skip>${skip.editorconfig.check}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- <dependency> -->
+      <!-- <groupId>org.springframework.cloud</groupId> -->
+      <!-- <artifactId>spring-cloud-dependencies</artifactId> -->
+      <!-- <version>Finchley.M2</version> -->
+      <!-- <type>pom</type> -->
+      <!-- <scope>import</scope> -->
+      <!-- </dependency> -->
+    </dependencies>
+  </dependencyManagement>
+  <!-- <repositories> -->
+  <!-- <repository> -->
+  <!-- <id>spring-milestones</id> -->
+  <!-- <name>Spring Milestones</name> -->
+  <!-- <url>https://repo.spring.io/libs-milestone</url> -->
+  <!-- <snapshots> -->
+  <!-- <enabled>false</enabled> -->
+  <!-- </snapshots> -->
+  <!-- </repository> -->
+  <!-- </repositories> -->
+</project>

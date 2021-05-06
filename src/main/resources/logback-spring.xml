@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <springProperty scope="context" name="logsFileDirectory" source="logging.directory" defaultValue="/logs"/>
+  <springProperty scope="context" name="serviceName" source="logging.servicename" defaultValue="eypharma"/>
+  <springProperty scope="context" name="logFile" source="logging.file" defaultValue="eypharma.log"/>
+  <springProperty scope="context" name="maxFileSize" source="logging.filesize.max" defaultValue="20MB"/>
+  <springProperty scope="context" name="maxArchiveSize" source="logging.archivesize.max" defaultValue="200MB"/>
+  <springProperty scope="context" name="maxHistory" source="logging.history.max" defaultValue="30"/>
+  <springProperty scope="context" name="devLogLevel" source="logging.dev.loglevel" defaultValue="DEBUG"/>
+  <springProperty scope="context" name="recLogLevel" source="logging.recette.loglevel" defaultValue="DEBUG"/>
+  <springProperty scope="context" name="preprodLogLevel" source="logging.preprod.loglevel" defaultValue="DEBUG"/>
+  <springProperty scope="context" name="prodLogLevel" source="logging.prod.loglevel" defaultValue="DEBUG"/>
+  <springProperty scope="context" name="logstash-server" source="logstash.server"/>
+
+
+  <appender name="CONSOLE-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="SAVE-TO-FILE-APPENDER"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logsFileDirectory}/${logFile}</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</Pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${logsFileDirectory}/archived/${serviceName}-%d{dd-MM-yyyy}_%i.log</fileNamePattern>
+      <maxFileSize>${maxFileSize}</maxFileSize>
+      <maxHistory>${maxHistory}</maxHistory>
+      <totalSizeCap>${maxArchiveSize}</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <springProfile name="test">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE-APPENDER" />
+    </root>
+  </springProfile>
+  <springProfile name="dev">
+    <root level="${devLogLevel}">
+      <appender-ref ref="CONSOLE-APPENDER" />
+    </root>
+  </springProfile>
+  <springProfile name="recette">
+    <root level="${recLogLevel}">
+      <appender-ref ref="CONSOLE-APPENDER" />
+      <appender-ref ref="SAVE-TO-FILE-APPENDER" />
+    </root>
+  </springProfile>
+  <springProfile name="preprod">
+    <root level="${preprodLogLevel}">
+      <appender-ref ref="SAVE-TO-FILE-APPENDER" />
+    </root>
+  </springProfile>
+  <springProfile name="prod">
+    <root level="${prodLogLevel}">
+      <appender-ref ref="SAVE-TO-FILE-APPENDER" />
+    </root>
+  </springProfile>
+
+</configuration>
