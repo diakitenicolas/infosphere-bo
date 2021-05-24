@@ -20,10 +20,10 @@ spring:
     change-log: classpath:config/liquibase/master.xml
   jpa:
     database: H2
-    show-sql: false
+    show-sql: true
     properties:
       hibernate.temp.use_jdbc_metadata_defaults: false
-      transaction-type: RESOURCE_LOCAL
+#      transaction-type: RESOURCE_LOCAL
     hibernate:
       ddl-auto: create
 logging:

@@ -40,6 +40,8 @@
     <skip.unit.test>true</skip.unit.test>
     <skip.editorconfig.check>false</skip.editorconfig.check>
     <skip.codestyle.application>true</skip.codestyle.application>
+    <mapstruct.version>1.2.0.Final</mapstruct.version>
+    <lombok.maven.compiler.version>1.18.2</lombok.maven.compiler.version>
   </properties>
 
   <dependencies>
@@ -159,6 +161,25 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-jdk8</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+
+    <!-- SWAGGER -->
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-boot-starter</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
 
   </dependencies>
 
@@ -283,6 +304,31 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+<!--          <processors>-->
+<!--            <processor>org.mapstruct.ap.MappingProcessor</processor>-->
+<!--          </processors>-->
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.maven.compiler.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
       </plugin>
     </plugins>
   </build>
