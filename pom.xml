@@ -10,7 +10,6 @@
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
 
-
   <groupId>io.infosphere</groupId>
   <artifactId>infosphre-bo</artifactId>
   <version>0.0.1-SNAPSHOT</version>
@@ -33,15 +32,16 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <guava.version>20.0</guava.version>
 
     <skip.integration.test>true</skip.integration.test>
     <skip.unit.test>true</skip.unit.test>
     <skip.editorconfig.check>false</skip.editorconfig.check>
     <skip.codestyle.application>true</skip.codestyle.application>
-    <mapstruct.version>1.2.0.Final</mapstruct.version>
-    <lombok.maven.compiler.version>1.18.2</lombok.maven.compiler.version>
+    <mapstruct.version>1.4.1.Final</mapstruct.version>
+    <lombok.maven.compiler.version>1.18.20</lombok.maven.compiler.version>
+    <swagger-maven-plugin-version>3.1.0</swagger-maven-plugin-version>
   </properties>
 
   <dependencies>
@@ -163,7 +163,7 @@
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct-jdk8</artifactId>
+      <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
     </dependency>
 
@@ -173,13 +173,23 @@
       <artifactId>springfox-boot-starter</artifactId>
       <version>3.0.0</version>
     </dependency>
-
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger-ui</artifactId>
       <version>3.0.0</version>
     </dependency>
 
+    <!-- Security -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>3.10.3</version>
+    </dependency>
 
   </dependencies>
 
@@ -311,11 +321,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-<!--          <processors>-->
-<!--            <processor>org.mapstruct.ap.MappingProcessor</processor>-->
-<!--          </processors>-->
           <annotationProcessorPaths>
             <path>
               <groupId>org.mapstruct</groupId>
@@ -325,11 +330,53 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>${lombok.maven.compiler.version}</version>
+              <version>${lombok.version}</version>
             </path>
+            <dependency>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok-mapstruct-binding</artifactId>
+              <version>0.2.0</version>
+            </dependency>
           </annotationProcessorPaths>
         </configuration>
       </plugin>
+
+      <!--swagger plugin-->
+      <plugin>
+        <groupId>com.github.kongchen</groupId>
+          <artifactId>swagger-maven-plugin</artifactId>
+        <version>${swagger-maven-plugin-version}</version>
+        <configuration>
+          <apiSources>
+            <apiSource>
+              <springmvc>true</springmvc>
+              <locations>io.infosphere.bo.controller</locations>
+              <info>
+                <title>INFO-SPHERE</title>
+                <version>${project.version}</version>
+              </info>
+              <schemes>https</schemes>
+              <outputPath>${basedir}/test</outputPath>
+              <host>localhost:7777</host>
+              <basePath>/test</basePath>
+              <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
+              <outputPath>${basedir}/generated/document.html</outputPath>
+              <swaggerDirectory>${basedir}/generated/swagger-ui</swaggerDirectory>
+              <swaggerApiReader>com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader</swaggerApiReader>
+            </apiSource>
+          </apiSources>
+        </configuration>
+        <dependencies>
+          <!-- Adding dependency to swagger-hibernate-validations
+              to enable the BeanValidator as a custom model converter -->
+          <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-hibernate-validations</artifactId>
+            <version>1.5.6</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
     </plugins>
   </build>
 

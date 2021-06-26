@@ -4,6 +4,7 @@ import io.infosphere.bo.domain.Article;
 import io.infosphere.bo.domain.Category;
 import io.infosphere.bo.dto.ArticleDto;
 import io.infosphere.bo.dto.ArticlePageDto;
+import io.infosphere.bo.dto.SectionDto;
 import io.infosphere.bo.mapper.ArticleMapper;
 import io.infosphere.bo.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 
 @Service
 public class ArticleService {
@@ -30,6 +38,12 @@ public class ArticleService {
 
     public ArticleDto findOne(Long id) {
         return articleMapper.entityToDto(repository.getOne(id));
+    }
+
+    public ArticleDto create (ArticleDto articleDto) {
+        checkArticleValidity(articleDto);
+        Article article = articleMapper.dtoToEntity(articleDto);
+        return articleMapper.entityToDto(repository.save(article));
     }
 
     public ArticlePageDto getAllByCategoryId(Long categoryId, int page, int offset, ZonedDateTime oldestPublicationDate) {
@@ -60,6 +74,29 @@ public class ArticleService {
             );
 //            return cb.equal(categories.get("id"), categoryId);
         };
+    }
+
+    private void checkArticleValidity(ArticleDto articleDto) {
+        if(!StringUtils.hasText(articleDto.getTitle())) {
+            throw new IllegalArgumentException("Le titre de l'article ne doit pas etre vide");
+        }
+
+        if(CollectionUtils.isEmpty(articleDto.getCategories())){
+            throw new IllegalArgumentException("L'article doit avoir au moins une categorie");
+        }
+
+        if(CollectionUtils.isEmpty(articleDto.getSections())){
+            throw new IllegalArgumentException("L'article doit avoir au moins une section");
+        }
+
+        if(articleDto.getPublicationDate() != null && articleDto.getPublicationDate().isBefore(ZonedDateTime.now())) {
+            throw new IllegalArgumentException("La date de publication de l'article doit etre dans le future ");
+        }
+
+        articleDto.getSections().stream().map(SectionDto::getContent)
+                .filter(not(StringUtils::hasText))
+                .findAny()
+                .ifPresent(s -> {throw new IllegalArgumentException("Toutes les sections doivent avoir un contenu");});
     }
 
 }

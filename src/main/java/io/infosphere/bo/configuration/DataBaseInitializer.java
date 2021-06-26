@@ -3,11 +3,14 @@ package io.infosphere.bo.configuration;
 import io.infosphere.bo.domain.Article;
 import io.infosphere.bo.domain.Category;
 import io.infosphere.bo.domain.Section;
+import io.infosphere.bo.domain.User;
 import io.infosphere.bo.repository.ArticleRepository;
 import io.infosphere.bo.repository.CategoryRepository;
+import io.infosphere.bo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -22,6 +25,10 @@ public class DataBaseInitializer implements ApplicationRunner {
     private ArticleRepository articleRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -42,6 +49,8 @@ public class DataBaseInitializer implements ApplicationRunner {
         creatAndSaveArticle("anniversaire guerre Salvador vs Honduras ", new HashSet<>(Arrays.asList(sport, politic)), null, twoWeeksAgo);
         creatAndSaveArticle("Debut de saison chaud pour Liverpool", Collections.singleton(sport), null, sevenMonthsAgo);
 
+
+        createUser("amine", "password");
     }
 
     private Category createAndSaveCategory(String name) {
@@ -72,5 +81,12 @@ public class DataBaseInitializer implements ApplicationRunner {
         section.setImgUrl(imgUrl);
         section.setRank(rank);
         return section;
+    }
+
+    private User createUser(String username, String password) {
+        User user =new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        return userRepository.save(user);
     }
 }

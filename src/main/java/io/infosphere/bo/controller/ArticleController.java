@@ -1,16 +1,14 @@
-package io.infosphere.bo.controllers;
+package io.infosphere.bo.controller;
 
-import io.infosphere.bo.domain.Article;
-import io.infosphere.bo.dto.ArticleDto;
+import io.infosphere.bo.domain.*;
+import io.infosphere.bo.dto.*;
 import io.infosphere.bo.dto.ArticlePageDto;
-import io.infosphere.bo.repository.ArticleRepository;
+import io.infosphere.bo.repository.*;
 import io.infosphere.bo.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 @RestController
@@ -30,8 +28,8 @@ public class ArticleController {
     }
 
     @PostMapping
-    public Article create(@RequestBody Article article) {
-        return repository.save(article);
+    public ArticleDto create(@RequestBody ArticleDto articleDto) {
+        return service.create(articleDto);
     }
 
     @GetMapping(value = "/{id}")
